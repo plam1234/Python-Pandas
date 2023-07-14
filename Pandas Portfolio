@@ -1,0 +1,66 @@
+# Importing Libs
+import pandas as pd
+import matplotlib.pyplot as plt
+plt.close("all")
+
+# Data Path Find / r = read csv file
+data = pd.read_csv (r'H:\Bootcamp and Apprenticeship\winemag-data_first150k.csv')
+#Show original
+#print (data)
+
+#Business Questions:
+# 1. Does Higher Rating effect the price? Nope
+# 2. Which Country has the highest average Rating and Price? England with an average rating of 92.88 at $2.96 per bottle
+
+# Creation of Data Frame
+pd.options.display.max_rows = 100
+df = pd.DataFrame(data, columns=['country','province','designation','points','variety','winery','price'])
+
+# Renaming columns
+df.columns = ['Country','State/Province','Location','Ratings','Name','Maker','Per Case in $']
+
+# Changing Index of Data Frame
+countryIndex = df.set_index('Country','State/Province')
+caseIndex = df.set_index('Per Case in $')
+
+# Limiting Results
+countryIndex[:15]
+
+# Show price bottle (create calculation field)
+#df['Per Bottle in $'] = df['Per Case in $'] /16
+pBtl = df['Per Case in $'] /16
+perBottle = pBtl.round(decimals=2)
+df['Per Bottle in $'] = perBottle 
+
+# Limit the amouunt of results shown
+df.loc[0:15, ['Country','State/Province','Location','Ratings','Name','Maker','Per Case in $','Per Bottle in $']]
+#print(perBottle.round(decimals= 2))
+
+# Sorting Values
+# Descending Order of Price per Bottle
+df.sort_values(by='Per Bottle in $', ascending= False)
+
+#Selecting Specific Data points wih pandas
+# First Row and First Column
+df.iloc[0:1, 0:1]
+# Two Rows and First Column [uncomment below to show]
+df.iloc[0:2, 0:1]
+
+# Grouping Data Frame w/ Groupby
+dfMean = df.groupby('Country').mean()
+dfMean.sort_values(['Ratings','Per Bottle in $'], ascending= False)
+
+# Descriptive Statistics
+df.describe(include='all')
+# Enter Column name in [] to show different details. | Count: count | Mean: mean | Standard deviation: std | Minimum: min | Maximum: max | Quantile: (q=0.25/.50/.75)
+#df['Maker'].describe()
+
+# View Colum Headers first n Rows
+df.head(1)
+
+# Last n Rows in a Data Frame
+df.tail(1)
+
+# Plot Chart
+df.plot(y = 'Per Bottle in $', x= 'Country', kind = 'line')
+plt.show()
